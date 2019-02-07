@@ -1,0 +1,40 @@
+---
+title: "Design 2k"
+author: "Fernando Bastos"
+date: "7 de fevereiro de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Rendimento de Liquefação e Número de Hidroxilas
+
+Fatores sob análise:
+
+\begin{array}{cccc}
+\hline
+&&Níveis&&\\
+\hline
+Fatores                      &    -1&  0 	&  1 \\
+ 	  \hline
+\textrm{X1: catalyst amount (C)}      &   2\%	& 5\% & 7\% \\
+\textrm{X2: time of reaction (t)}     &   0.5h	& 1h 	    & 1.5h \\
+\textrm{X3: ratio biomass/solvent (R)}&   2:1	& 3.5:1 	& 5:1 \\
+ 	  \hline
+\end{array}
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
