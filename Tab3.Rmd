@@ -26,7 +26,7 @@ Fatores                      &    -1&  0 	&  1 \\
 \end{array}
 
 ```{r}
-url <- "https://rawcdn.githack.com/maf261/Design2k/3ba1c025ab8fca9857cebc7112ec14b61c641f03/Tab1.txt"
+url <- "https://raw.githack.com/maf261/Design2k/master/Tab3.txt"
 dados <- read.csv(url, sep = "")
 names(dados) <- c("X1","X2","X3","Y")
 str(dados)
@@ -57,17 +57,35 @@ tab <- model.matrix(~ X1*X2*X3, data = dados)
 contr <- t(tab[, -1]) %*% dados$Y
 (ef <- contr/(r * 2^(k-1)))
 aux <- qqnorm(ef, col = 2, pch = 19); qqline(ef)
-text(aux$x, aux$y, rownames(aux$y), cex = 0.8, pos = 1)
+text(aux$x, aux$y, rownames(aux$y), cex = 0.8, pos = 2)
 ```
 
-Através do gráfico acima, vemos que o efeito mais discrepante é o X1. De maneira geral, as interações ficaram no centro, o que mostra que interações podem ser consideradas como nulas. Portanto, para sermos conservadores, podemos ajustar agora um modelo considerando apenas o fator X1.
+Através do gráfico acima, identificamos os efeitos mais discrepantes. As que ficaram no centro, podem ser consideradas como nulas. Portanto, podemos ajustar agora o melhor modelo. Vejamos ainda o gráfico de Pareto.
+
+```{r}
+library("qualityTools")
+fdo=facDesign(k=3,centerCube=3)
+(fdo=randomize(fdo, so=TRUE))
+response(fdo) <- dados$Y
+names(fdo) = c( "Catalyst" , "Time" ,"Ratio" , "Y") #optional
+lows(fdo) = c(2,0.5,2) #optional
+highs(fdo)= c(7,1.5,5)#optional
+summary(fdo) #information about the factorial design
+effectPlot(fdo,classic = TRUE)
+interactionPlot(fdo)
+paretoPlot(fdo)
+```
+
 
 ```{r}
 ##----------------------------------------------------------------------
 ## b) Análise de variância para confirmar impressões de (a)
-m0 <- lm(Y ~ (X1+X2+X3)^2, data = dados)
+m0 <- lm(Y ~ (X1*X2*X3), data = dados)
 anova(m0)
 ```
+
+Não temos fator significativo!
+
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -110,7 +128,7 @@ que possui apenas um grau de liberdade (portanto SQlof = MQlof). Como vimos, o t
 pf(Flof, 1, nc - 1, lower.tail = FALSE)
 ```
 
-Ou seja, não rejeitamos a hipótese de que o modelo linear é adequado (ou de que não existe falta de ajuste). De outra forma, podemos proceder:
+Ou seja, rejeitamos a $10\%$ a hipótese de que o modelo linear é adequado (ou de que não existe falta de ajuste). De outra forma, podemos proceder:
 
 ```{r}
 ## Modelo desconsiderando os pontos centrais
@@ -151,17 +169,10 @@ Note que o teste F para SQlof está de fato testando se esse termo é importante
 anova(m1, m2)
 ```
 
-Nesse caso, não rejeitamos a hipótese de que essas médias são iguas e concluimos que não há falta de ajuste, e que o modelo linear é adequado. Assim, podemos redefinir o modelo sem esse termo
+Nesse caso, rejeitamos a hipótese de que essas médias são iguas e concluimos que há falta de ajuste, e que o modelo linear não é adequado. Assim, podemos redefinir o modelo com esse termo
 
 ```{r}
-mf <- update(m1, . ~ . -lof)
-anova(mf)
-```
-
-Como as interações e os fatores X2 e X3 são não significativos, então também podemos retira-los do modelo. No entanto, o efeito da interação X1:X2 foi inicialmente indicado como forte. Por isso, podemos agora atualizar o modelo e na dúvida, manter a interação X1:X2 para avaliação, e por consequência devemos manter também X2 pelo princípio da marginalidade.
-
-```{r}
-mf <- lm(Y ~ X1*X2, data = dados)
+mf <- lm(Y ~ (X1*X2*X3) + lof, data = dados)
 anova(mf)
 ```
 
@@ -195,7 +206,8 @@ par(mfrow = c(1, 1))
 ## Predição para as combinações únicas dos fatores
 pred <- data.frame(X1 = dados$X1,
                    X2 = dados$X2,
-                   X3 = dados$X3)
+                   X3 = dados$X3,
+                   lof = dados$lof)
 pred$y <- predict(mf, newdata = pred)
 pred
 ```
@@ -214,7 +226,8 @@ cbind(pred, yproj = apply(proj(mf)[,-4], 1, sum))
 ## dos fatores
 pred <- expand.grid(X1 = seq(-1, 1, length.out = 30),
                     X2 = seq(-1, 1 ,length.out = 30),
-                    X3 = seq(-1, 1 ,length.out = 30))
+                    X3 = seq(-1, 1 ,length.out = 30),
+                    lof = seq(-1, 1 ,length.out = 30))
 pred$y <- predict(mf, newdata = pred)
 library("lattice")
 ## Vários formas de visualizar

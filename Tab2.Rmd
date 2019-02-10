@@ -26,7 +26,7 @@ Fatores                      &    -1&  0 	&  1 \\
 \end{array}
 
 ```{r}
-url <- "https://rawcdn.githack.com/maf261/Design2k/3ba1c025ab8fca9857cebc7112ec14b61c641f03/Tab1.txt"
+url <- "https://raw.githack.com/maf261/Design2k/master/Tab2.txt"
 dados <- read.csv(url, sep = "")
 names(dados) <- c("X1","X2","X3","Y")
 str(dados)
@@ -60,14 +60,20 @@ aux <- qqnorm(ef, col = 2, pch = 19); qqline(ef)
 text(aux$x, aux$y, rownames(aux$y), cex = 0.8, pos = 1)
 ```
 
-Através do gráfico acima, vemos que o efeito mais discrepante é o X1. De maneira geral, as interações ficaram no centro, o que mostra que interações podem ser consideradas como nulas. Portanto, para sermos conservadores, podemos ajustar agora um modelo considerando apenas o fator X1.
+Através do gráfico acima, vemos que os efeitos mais discrepantes são de X2 e das interações X1:X2 e X1:X2:X3. As que ficaram no centro, podem ser consideradas como nulas. Portanto, para sermos conservadores, podemos ajustar agora um modelo considerando apenas os fatores X1, X2, X3 e as interações X1:X2 e X1:X2:X3 .
 
 ```{r}
 ##----------------------------------------------------------------------
 ## b) Análise de variância para confirmar impressões de (a)
-m0 <- lm(Y ~ (X1+X2+X3)^2, data = dados)
+m0 <- lm(Y ~ (X1*X2*X3), data = dados)
 anova(m0)
 ```
+
+```{r}
+m01 <- lm(Y ~ (X1*X2*X3)-X1:X3-X2:X3, data = dados)
+anova(m01)
+```
+
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -158,10 +164,10 @@ mf <- update(m1, . ~ . -lof)
 anova(mf)
 ```
 
-Como as interações e os fatores X2 e X3 são não significativos, então também podemos retira-los do modelo. No entanto, o efeito da interação X1:X2 foi inicialmente indicado como forte. Por isso, podemos agora atualizar o modelo e na dúvida, manter a interação X1:X2 para avaliação, e por consequência devemos manter também X2 pelo princípio da marginalidade.
+Como as interações e os fatores X2 e X3 são não significativos, então também podemos retira-los do modelo. No entanto, o efeito da interação X1:X2:X3 foi inicialmente indicado como forte. Por isso, podemos agora atualizar o modelo e na dúvida, manter a interação X1:X2:X3 para avaliação, e por consequência devemos manter também X2 e X3 pelo princípio da marginalidade.
 
 ```{r}
-mf <- lm(Y ~ X1*X2, data = dados)
+mf <- lm(Y ~ (X1*X2*X3)-X1:X3-X2:X3,data=dados)
 anova(mf)
 ```
 

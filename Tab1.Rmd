@@ -62,10 +62,26 @@ text(aux$x, aux$y, rownames(aux$y), cex = 0.8, pos = 1)
 
 Através do gráfico acima, vemos que o efeito mais discrepante é o X1. De maneira geral, as interações ficaram no centro, o que mostra que interações podem ser consideradas como nulas. Portanto, para sermos conservadores, podemos ajustar agora um modelo considerando apenas o fator X1.
 
+Antes, vejamos o gráfico de Pareto.
+
+```{r}
+library("qualityTools")
+fdo=facDesign(k=3,centerCube=3)
+(fdo=randomize(fdo, so=TRUE))
+response(fdo) <- dados$Y
+names(fdo) = c( "Catalyst" , "Time" ,"Ratio" , "Y") #optional
+lows(fdo) = c(2,0.5,2) #optional
+highs(fdo)= c(7,1.5,5)#optional
+summary(fdo) #information about the factorial design
+effectPlot(fdo,classic = TRUE)
+interactionPlot(fdo)
+paretoPlot(fdo)
+```
+
 ```{r}
 ##----------------------------------------------------------------------
 ## b) Análise de variância para confirmar impressões de (a)
-m0 <- lm(Y ~ (X1+X2+X3)^2, data = dados)
+m0 <- lm(Y ~ (X1*X2*X3), data = dados)
 anova(m0)
 ```
 
