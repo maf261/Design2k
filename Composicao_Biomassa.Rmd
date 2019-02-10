@@ -1,0 +1,26 @@
+---
+title: "Composições da Biomassa"
+author: "Fernando Bastos"
+date: "10 de fevereiro de 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Composição das Biomassas
+
+```{r,fig.align='center',fig.width = 15,fig.height=10}
+url <- "https://raw.githack.com/maf261/Design2k/master/table.txt"
+dados <- read.csv(url, sep = "")
+names(dados) <- c("Material","PA","Valor")
+str(dados)
+a <- 1:200
+library("ggplot2")
+ggplot(dados, aes(x=factor(dados$Material), y=Valor),ylim=c(0,100)) +
+  geom_bar(stat="identity",aes(fill=factor(dados$Material))) + facet_grid(.~PA) +
+  scale_fill_discrete(name="Biomassa", labels=c("Cassava Pells (CP)", "Lemon Bagasse (LB)", "Rice Rusk (RR)")) + xlab("") + ylab("Quantidade (%)") +
+  geom_text(aes(label=Valor), vjust=-0.3, size=3.5)
+
+```
