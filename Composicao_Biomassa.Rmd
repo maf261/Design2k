@@ -20,7 +20,41 @@ a <- 1:200
 library("ggplot2")
 ggplot(dados, aes(x=factor(dados$Material), y=Valor),ylim=c(0,100)) +
   geom_bar(stat="identity",aes(fill=factor(dados$Material))) + facet_grid(.~PA) +
-  scale_fill_discrete(name="Biomassa", labels=c("Cassava Pells (CP)", "Lemon Bagasse (LB)", "Rice Rusk (RR)")) + xlab("") + ylab("Quantidade (%)") +
+  scale_fill_discrete(name="Biomassa", labels=c("Cassava Pells (CP)", "Lemon Bagasse (LB)", "Rice Husk (RR)")) + xlab("") + ylab("Quantidade (%)") +
   geom_text(aes(label=Valor), vjust=-0.3, size=3.5)
 
+```
+
+## Boxplot do Rendimento da Liquefação
+
+```{r, fig.align='center'}
+## Importação e definições
+url <- "https://raw.githack.com/maf261/Design2k/master/LY_HN.txt"
+dados <- read.csv(url, sep = "")
+names(dados) <- c("Liquefaction","Valor1","Hidroxilas","Valor2")
+str(dados)
+summary(dados)
+
+library(ggplot2)
+bp <- ggplot(data=dados, aes(x=dados$Liquefaction, y=dados$Valor1, fill=dados$Liquefaction)) + 
+      geom_boxplot() +
+      scale_fill_discrete(name="Biomass", labels=c("Cassava Husk (CH)", "Lemon Bagasse (LB)", "Rice Husk (RR)")) + xlab("") + ylab("Liquefaction Yield (%)")
+bp
+```
+
+## Boxplot do número de hidroxilas
+
+```{r, fig.align='center'}
+## Importação e definições
+url <- "https://raw.githack.com/maf261/Design2k/master/LY_HN.txt"
+dados <- read.csv(url, sep = "")
+names(dados) <- c("Liquefaction","Valor1","Hidroxilas","Valor2")
+str(dados)
+summary(dados)
+
+library(ggplot2)
+bp2 <- ggplot(data=dados, aes(x=dados$Hidroxilas, y=dados$Valor2, fill=dados$Hidroxilas)) + 
+      geom_boxplot() +
+      scale_fill_discrete(name="Biomass", labels=c("Cassava Husk (CH)", "Lemon Bagasse (LB)", "Rice Husk (RR)")) + xlab("") + ylab("Hydroxyl number (mg/g)")
+bp2
 ```

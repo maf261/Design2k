@@ -55,7 +55,7 @@ Uma forma de verificar quais efeitos são importantes é através de um gráfico
 ## a) Gráfico q-q dos efeitos
 tab <- model.matrix(~ X1*X2*X3, data = dados)
 contr <- t(tab[, -1]) %*% dados$Y
-(ef <- contr/(r * 2^(k-1)))
+(ef <- contr/(r*2^(k-1)))
 aux <- qqnorm(ef, col = 2, pch = 19); qqline(ef)
 text(aux$x, aux$y, rownames(aux$y), cex = 0.8, pos = 1)
 ```
@@ -75,7 +75,10 @@ highs(fdo)= c(7,1.5,5)#optional
 summary(fdo) #information about the factorial design
 effectPlot(fdo,classic = TRUE)
 interactionPlot(fdo)
+par(mfrow = c(1,2))
 paretoPlot(fdo)
+normalPlot(fdo)
+
 ```
 
 ```{r}
@@ -83,6 +86,7 @@ paretoPlot(fdo)
 ## b) Análise de variância para confirmar impressões de (a)
 m0 <- lm(Y ~ (X1*X2*X3), data = dados)
 anova(m0)
+summary(m0)
 ```
 
 ```{r}
